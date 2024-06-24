@@ -1,0 +1,7 @@
+Create (POST): http://localhost:8000/api/insert/user
+Read (GET): http://127.0.0.1:8000/api/get/user/"id del usuario"
+Update (PUT): http://localhost:8000/api/update/user/{user_id}
+Delete (DELETE): http://localhost:8000/api/delete/user/{user_id}
+
+
+Read (GET):  http://localhost:8000/api/get/all_users
