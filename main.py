@@ -1,9 +1,11 @@
 from fastapi import FastAPI, HTTPException
-from schema.user_schema import UserSchema
+from schema.user_schema import UserSchema, AttendanceSchema
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.user_controller import UserController
 from controllers.auth_controller import AuthController
+from controllers.attendance_controller import AttendanceController
+
 
 app = FastAPI()
 
@@ -17,6 +19,7 @@ app.add_middleware(
 
 user_controller = UserController()
 auth_controller = AuthController()
+attendance_controller = AttendanceController()
 
 class UserCredentials(BaseModel):
     username: str
@@ -70,5 +73,14 @@ def get_all_users():
     try:
         # Aquí llamamos a un método en el controlador para obtener todos los usuarios
         return user_controller.get_all_users()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+@app.post("/api/insert/attendance")
+def insert_attendance(attendance_data: AttendanceSchema):
+    try:
+        data = attendance_data.dict()
+        data.pop("id", None)  # Eliminar el campo id si existe
+        return attendance_controller.insert_attendance(data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

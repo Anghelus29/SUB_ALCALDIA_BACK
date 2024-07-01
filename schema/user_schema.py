@@ -11,3 +11,9 @@ class UserSchema(BaseModel):
     user_name: str
     password: str
     
+class AttendanceSchema(BaseModel):
+    id: Optional[int] = None
+    id_people: int
+    hardware: str
+    software: str
+    description: str

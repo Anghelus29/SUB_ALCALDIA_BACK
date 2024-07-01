@@ -7,6 +7,7 @@ class UserController:
     def __init__(self):
         self.conn = UserConnection()
 
+    #Metodo para insertar usuarios a la base de datos
     def write(self, data):
         try:
             with self.conn.conn.cursor() as cur:
@@ -17,7 +18,8 @@ class UserController:
             return {"message": "Data inserted successfully"}
         except Exception as e:
             raise e
-
+        
+    #Metodo para buscar un usuario por su id
     def read(self, user_id):
         try:
             with self.conn.conn.cursor() as cur:
@@ -39,6 +41,7 @@ class UserController:
         except Exception as e:
             raise e
 
+    #Metodo para actualizar datos de un usuario
     def update(self, user_id, data):
         try:
             with self.conn.conn.cursor() as cur:
@@ -52,6 +55,7 @@ class UserController:
         except Exception as e:
             raise e
 
+    #Metodo para eliminar datos de un usuario
     def delete(self, user_id):
         try:
             with self.conn.conn.cursor() as cur:
@@ -60,7 +64,8 @@ class UserController:
             return {"message": "User deleted successfully"}
         except Exception as e:
             raise e
-        
+
+    #Metodo para mostrar a todos los usuarios
     def get_all_users(self):
         try:
             with self.conn.conn.cursor() as cur:
