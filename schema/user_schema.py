@@ -17,3 +17,5 @@ class AttendanceSchema(BaseModel):
     hardware: str
     software: str
     description: str
+    date: str
+    hour: str

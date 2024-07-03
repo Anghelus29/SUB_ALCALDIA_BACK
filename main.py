@@ -76,6 +76,7 @@ def get_all_users():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
+#point para attendance
 @app.post("/api/insert/attendance")
 def insert_attendance(attendance_data: AttendanceSchema):
     try:

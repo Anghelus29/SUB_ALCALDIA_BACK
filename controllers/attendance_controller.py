@@ -8,8 +8,8 @@ class AttendanceController:
         try:
             with self.conn.conn.cursor() as cur:
                 cur.execute("""
-                    INSERT INTO attendance (id_people, hardware, software, description)
-                    VALUES (%(id_people)s, %(hardware)s, %(software)s, %(description)s)""", attendance_data)
+                    INSERT INTO attendance (id_people, hardware, software, description, date, hour)
+                    VALUES (%(id_people)s, %(hardware)s, %(software)s, %(description)s, %(date)s, %(hour)s)""", attendance_data)
                 self.conn.conn.commit()
                 return {"message": "Data inserted successfully"}
         except Exception as e:
