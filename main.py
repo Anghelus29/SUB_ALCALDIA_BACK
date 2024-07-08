@@ -85,3 +85,12 @@ def insert_attendance(attendance_data: AttendanceSchema):
         return attendance_controller.insert_attendance(data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+#point para mostrar attendance
+@app.get("/api/get/all_attendance")
+def get_all_requests():
+    try:
+
+        return attendance_controller.get_all_requests()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

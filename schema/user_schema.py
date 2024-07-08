@@ -19,3 +19,4 @@ class AttendanceSchema(BaseModel):
     description: str
     date: str
     hour: str
+    state: str
