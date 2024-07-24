@@ -20,3 +20,10 @@ class AttendanceSchema(BaseModel):
     date: str
     hour: str
     state: str
+
+class ReportSchema(BaseModel):
+    id: Optional[int] = None
+    id_attendance: int
+    state: str
+    date_review: str
+    work_done: str

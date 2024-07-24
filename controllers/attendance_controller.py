@@ -44,3 +44,19 @@ class AttendanceController:
                 return attendance_list
         except Exception as e:
             raise e
+
+
+#Metodo para registrar las solicitudes asistidas
+    def __init__(self):
+        self.conn = UserConnection()
+
+    def insert_reports(self, reports_data):
+        try:
+            with self.conn.conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO reports (id_attendance, state, date_review, work_done)
+                    VALUES (%(id_attendance)s, %(state)s, %(date_review)s, %(work_done)s)""", reports_data)
+                self.conn.conn.commit()
+                return {"message": "Data inserted successfully"}
+        except Exception as e:
+            raise e

@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException
-from schema.user_schema import UserSchema, AttendanceSchema
+
+from schema.user_schema import UserSchema, AttendanceSchema, ReportSchema
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.user_controller import UserController
 from controllers.auth_controller import AuthController
 from controllers.attendance_controller import AttendanceController
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from pydantic import BaseModel
+from typing import List
 
 
 app = FastAPI()
@@ -20,6 +23,7 @@ app.add_middleware(
 user_controller = UserController()
 auth_controller = AuthController()
 attendance_controller = AttendanceController()
+connected_clients: List[WebSocket] = []
 
 class UserCredentials(BaseModel):
     username: str
@@ -76,21 +80,46 @@ def get_all_users():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
-#point para attendance
+@app.websocket("/ws/attendance")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    connected_clients.append(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            # Opcional: Procesar el mensaje recibido desde el cliente
+    except WebSocketDisconnect:
+        connected_clients.remove(websocket)
+
 @app.post("/api/insert/attendance")
-def insert_attendance(attendance_data: AttendanceSchema):
+async def insert_attendance(attendance_data: AttendanceSchema):
     try:
         data = attendance_data.dict()
-        data.pop("id", None)  # Eliminar el campo id si existe
-        return attendance_controller.insert_attendance(data)
+        data.pop("id", None)
+        result = attendance_controller.insert_attendance(data)
+        # Notificar a los clientes conectados
+        for client in connected_clients:
+            await client.send_json({"message": "new_attendance", "data": data})
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    
-#point para mostrar attendance
+
 @app.get("/api/get/all_attendance")
 def get_all_requests():
     try:
-
         return attendance_controller.get_all_requests()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+@app.post("/api/insert/reports")
+async def insert_reports(reports_data: ReportSchema):
+    try:
+        data = reports_data.dict()
+        data.pop("id", None)
+        result = attendance_controller.insert_reports(data)
+        # Notificar a los clientes conectados
+        for client in connected_clients:
+            await client.send_json({"message": "new_attendance", "data": data})
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
