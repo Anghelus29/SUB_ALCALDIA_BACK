@@ -24,6 +24,6 @@ class AttendanceSchema(BaseModel):
 class ReportSchema(BaseModel):
     id: Optional[int] = None
     id_attendance: int
-    state: str
     date_review: str
     work_done: str
+

@@ -20,7 +20,7 @@ class AttendanceController:
     def get_all_requests(self):
         try:
             with self.conn.conn.cursor() as cur:
-                cur.execute("SELECT attendance.id AS attendance_id, attendance.id_people, attendance.hardware, attendance.software, attendance.description, attendance.date, attendance.hour, attendance.state, people.id AS people_id, people.name, people.last_name, people.type_of_user, people.post, people.office, people.user_name FROM attendance JOIN  people ON attendance.id_people = people.id; ")
+                cur.execute("SELECT attendance.id AS attendance_id, attendance.id_people, attendance.hardware, attendance.software, attendance.description, attendance.date, attendance.hour, attendance.state, people.id AS people_id, people.name, people.last_name, people.type_of_user, people.post, people.office, people.user_name FROM attendance JOIN  people ON attendance.id_people = people.id AND attendance.state = 'Por Revisar'; ")
                 attendances=cur.fetchall()
                 attendance_list=[]
                 for attendance in attendances:
@@ -54,9 +54,23 @@ class AttendanceController:
         try:
             with self.conn.conn.cursor() as cur:
                 cur.execute("""
-                    INSERT INTO reports (id_attendance, state, date_review, work_done)
-                    VALUES (%(id_attendance)s, %(state)s, %(date_review)s, %(work_done)s)""", reports_data)
+                    INSERT INTO reports (id_attendance, date_review, work_done)
+                    VALUES (%(id_attendance)s, %(date_review)s, %(work_done)s)""", reports_data)
                 self.conn.conn.commit()
                 return {"message": "Data inserted successfully"}
+        except Exception as e:
+            raise e
+        
+#Metodos para cambiar el state de las asistencias a REVISADO
+    def update_attendance(self, attendance_id, state):
+        try:
+            with self.conn.conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE attendance
+                    SET state = %(state)s
+                    WHERE id = %(id)s
+                """, {"state": state, "id": attendance_id})
+                self.conn.conn.commit()
+            return {"message": "Attendance state updated successfully"}
         except Exception as e:
             raise e

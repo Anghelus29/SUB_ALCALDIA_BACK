@@ -111,6 +111,16 @@ def get_all_requests():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
+@app.put("/api/update/attendance/{attendance_id}")
+def update_attendance(attendance_id: int):
+    try:
+        # Supongamos que 'attendance_controller' es una instancia de la clase que tiene el método 'update_attendance'
+        state = "Revisado"
+        response = attendance_controller.update_attendance(attendance_id, state)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
 @app.post("/api/insert/reports")
 async def insert_reports(reports_data: ReportSchema):
     try:
