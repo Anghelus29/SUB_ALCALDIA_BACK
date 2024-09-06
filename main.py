@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from controllers.user_controller import UserController
 from controllers.auth_controller import AuthController
 from controllers.attendance_controller import AttendanceController
+from controllers.report_controller import ReportController
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from pydantic import BaseModel
 from typing import List
@@ -23,6 +24,7 @@ app.add_middleware(
 user_controller = UserController()
 auth_controller = AuthController()
 attendance_controller = AttendanceController()
+reports_controller = ReportController()
 connected_clients: List[WebSocket] = []
 
 class UserCredentials(BaseModel):
@@ -131,5 +133,13 @@ async def insert_reports(reports_data: ReportSchema):
         for client in connected_clients:
             await client.send_json({"message": "new_attendance", "data": data})
         return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+
+@app.get("/api/get/all_reports")
+def get_all_reports():
+    try:
+        return reports_controller.get_all_reports()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
