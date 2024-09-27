@@ -143,3 +143,11 @@ def get_all_reports():
         return reports_controller.get_all_reports()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+@app.put("/api/update/report/{report_id}")
+def update_report(report_id: int, report_data: ReportSchema):
+    try:
+        data = report_data.dict()
+        return reports_controller.update_report(report_id, data)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

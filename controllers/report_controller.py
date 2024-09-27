@@ -51,3 +51,16 @@ class ReportController:
                 return report_list
         except Exception as e:
             raise e
+
+#Metodo para actualizar el trabajo realizado del reporte
+    def update_report(self, report_id, data):
+        try:
+            with self.conn.conn.cursor() as cur:
+                cur.execute("""
+                UPDATE reports 
+                SET work_done=%(work_done)s
+                WHERE id=%(id)s""", {**data, "id": report_id})
+            self.conn.conn.commit()
+            return {"message": "User updated successfully"}
+        except Exception as e:
+            raise e
